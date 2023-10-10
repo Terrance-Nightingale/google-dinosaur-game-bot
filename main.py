@@ -1,28 +1,38 @@
 import time
-import pyautogui
-from PIL import Image
-# TODO 1. Grab image
-# TODO 2. When certain pixels are grey, press Space to jump
+import keyboard
+from mss import mss
+from selenium import webdriver
 
-# Sets the color to jump at
+# Constants
+# Sets the color to jump at, the target pixel to evaluate, and the game url
+URL = "https://elgoog.im/dinosaur-game/"
 JUMP_COLOR = (83, 83, 83)
-TARGET = (365, 680)
+RANGE = {'top': 600, 'left': 560, 'width': 100, 'height': 200}
+TARGET_X = 50
+TARGET_Y = 120
 
+# Sets driver configurations
+options = webdriver.EdgeOptions()
+options.add_experimental_option("detach", True)
+options.add_argument("--guest")
 
-screenWidth, screenHeight = pyautogui.screenshot().size
-print(screenWidth, screenHeight)
+# Opens webpage to dinosaur game
+driver = webdriver.Edge(options=options)
+driver.maximize_window()
+driver.get(URL)
+time.sleep(2)
+
+# Starts game
+keyboard.press("space")
 
 playing = True
 while playing:
-    game_state = pyautogui.screenshot().getpixel(TARGET)
-    if game_state == JUMP_COLOR:
-        print("Jump!")
-# with Image.open("Game.png") as game_state:
-#     game_state.show()
-#     evaluating = True
-#     while evaluating:
-#         x, y = pyautogui.position()
-#         r, g, b = pyautogui.pixel(x, y)
-#         print(x, y)
-#         print(r, g, b)
-#         time.sleep(2)
+    # Set screenshot range.
+    with mss() as sct:
+        game_state = sct.grab(RANGE)
+    # Establish variables
+    cactus_pxl = game_state.pixel(TARGET_X, TARGET_Y)
+    bird_pxl = game_state.pixel(TARGET_X, TARGET_Y - 100)
+    # Check if cactus/bird is in jumping range
+    if cactus_pxl == JUMP_COLOR or bird_pxl == JUMP_COLOR:
+        keyboard.press("space")
