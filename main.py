@@ -6,7 +6,6 @@ from selenium import webdriver
 # Constants
 # Sets the color to jump at, the target pixel to evaluate, and the game url
 URL = "https://elgoog.im/dinosaur-game/"
-JUMP_COLOR = (83, 83, 83)
 RANGE = {'top': 600, 'left': 150, 'width': 500, 'height': 200}
 TARGET_X = 460
 TARGET_Y = 120
